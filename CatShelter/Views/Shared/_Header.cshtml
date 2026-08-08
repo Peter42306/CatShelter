@@ -1,0 +1,80 @@
+﻿<!-- Desktop / tablet navbar -->
+<div class="w3-top">
+    <div class="w3-bar w3-white w3-card">
+
+        <a asp-controller="Home"
+           asp-action="Index"
+           class="w3-bar-item w3-button">
+            Лу-Кошка
+        </a>
+
+        <div class="w3-right w3-hide-small">
+            <a href="/#about"
+               class="w3-bar-item w3-button">
+                About
+            </a>
+            <a href="/#pets"
+               class="w3-bar-item w3-button">
+                Pets
+            </a>
+            <a href="/#gallery"
+               class="w3-bar-item w3-button">
+                Gallery
+            </a>
+            <a href="/#blog"
+               class="w3-bar-item w3-button">
+                Blog
+            </a>
+            <a href="/#contact"
+               class="w3-bar-item w3-button">
+                Contact
+            </a>
+
+            
+        </div>        
+
+        <a href="javascript:void(0)"
+           class="w3-bar-item w3-button w3-right w3-hide-medium w3-hide-large"
+           onclick="w3_open()">
+            <i class="fa fa-bars"></i>
+        </a>
+    </div>
+</div>
+
+<!-- Mobile sidebar -->
+<nav class="w3-sidebar w3-bar-block w3-green w3-card w3-animate-left w3-hide-medium w3-hide-large"
+     style="display: none"
+     id="mySidebar">
+
+    <a href="javascript:void(0)"
+       onclick="w3_close()"
+       class="w3-bar-item w3-button">
+        Close ×
+    </a>
+
+    <a href="/#home"
+       onclick="w3_close()"
+       class="w3-bar-item w3-button">
+        Home
+    </a>
+    <a href="/#about"
+       onclick="w3_close()"
+       class="w3-bar-item w3-button">
+        About
+    </a>
+    <a href="/#pets"
+       onclick="w3_close()"
+       class="w3-bar-item w3-button">
+        Pets
+    </a>
+    <a href="/#blog"
+       onclick="w3_close()"
+       class="w3-bar-item w3-button">
+        Blog
+    </a>
+    <a href="/#contact"
+       onclick="w3_close()"
+       class="w3-bar-item w3-button">
+        Contact
+    </a>    
+</nav>

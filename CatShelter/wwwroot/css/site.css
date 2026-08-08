@@ -1,22 +1,106 @@
-html {
-  font-size: 14px;
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Raleway", sans-serif;
 }
 
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
+html,
 body {
-  margin-bottom: 60px;
+    height: 100%;
+    line-height: 1.8;
+    margin: 0;
+}
+
+/* Navbar */
+.w3-bar .w3-button {
+    padding: 16px;
+}
+
+.hero-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.content-section-narrow{
+    max-width: 900px;
+    margin:0 auto;
+    padding: 64px 16px;
+}
+
+.content-section-wide {
+    width:100%;
+    padding: 64px 16px;
+}
+
+
+
+/* Full height image header */
+.bgimg-1 {
+    background-position: center;
+    background-size: cover;
+    background-image: url("https://hel1.your-objectstorage.com/images-media/lu-koshka/lu-koshka-hero.jpg");
+    min-height: 100vh;
+}
+
+.contact-bg {
+    background-image: url("https://hel1.your-objectstorage.com/images-media/lu-koshka/lu-koshka-hero.jpg");
+    background-size: cover;
+    background-position: center;
+    min-height: 300px;
+}
+
+.cat-bg-section {
+    background-image: url("https://hel1.your-objectstorage.com/images-media/lu-koshka/lu-koshka-hero.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    min-height: 700px;
+}
+
+.split-contact-section {
+    display: flex;
+    min-height: 70vh;
+}
+
+.split-left-bg {
+    width: 60%;
+    background-image: url("https://hel1.your-objectstorage.com/images-media/lu-koshka/lu-koshka-horizontal-example-20260411_100037_1.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+.split-right-content {
+    width: 40%;
+    background: #f1f1f1;
+    padding: 80px 48px;
+}
+
+@media (max-width: 768px) {
+    .split-contact-section {
+        flex-direction: column;
+        min-height: auto;
+    }
+
+    .split-left-bg {
+        width: 100%;
+        height: 300px;
+        background-attachment: scroll;
+    }
+
+    .split-right-content {
+        width: 100%;
+        padding: 48px 24px;
+    }
+}
+
+html {
+    scroll-behavior: smooth;
 }

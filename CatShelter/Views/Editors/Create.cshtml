@@ -1,0 +1,52 @@
+﻿@model CatShelter.ViewModels.Editors.CreateEditorViewModel
+
+@{
+    ViewData["Title"] = "Create Editor";
+}
+
+<div class="w3-container" style="max-width:600px; margin:auto; padding-top:80px;">
+    
+    <h2>Create Editor</h2>
+    
+    <form asp-action="Create" method="post">
+
+        <div asp-validation-summary="ModelOnly"
+             class="w3-text-red">
+        </div>
+
+        <div class="w3-margin-bottom">
+            <label asp-for="Email"></label>
+            <input asp-for="Email" class="w3-input w3-border" />
+            <span asp-validation-for="Email" class="w3-text-red"></span>
+        </div>
+
+        <div class="w3-margin-bottom">
+            <label asp-for="Password"></label>
+            <input asp-for="Password" class="w3-input w3-border" />
+            <span asp-validation-for="Password" class="w3-text-red"></span>
+        </div>
+
+        <div class="w3-margin-bottom">
+            <label asp-for="ConfirmPassword"></label>
+            <input asp-for="ConfirmPassword" class="w3-input w3-border" />
+            <span asp-validation-for="ConfirmPassword" class="w3-text-red"></span>
+        </div>
+
+        <div class="w3-margin-bottom">
+            <button type="submit"
+                    class="w3-button w3-green">
+                Create Editor
+            </button>
+            <a asp-action="Index"
+               class="w3-button w3-light-grey">
+                Back
+            </a>
+        </div>
+        
+    </form>
+
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

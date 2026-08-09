@@ -29,6 +29,19 @@
                class="w3-bar-item w3-button">
                 Contact
             </a>
+            @if (User.IsInRole("Admin"))
+            {
+                <a asp-controller="Admin"
+                   asp-action="Index"                   
+                   class="w3-bar-item w3-button">
+                    Admin
+                </a>
+                <a asp-controller="Editors"
+                   asp-action="Index"
+                   class="w3-bar-item w3-button">
+                    Editors
+                </a>
+            }
 
             
         </div>        
@@ -77,4 +90,19 @@
        class="w3-bar-item w3-button">
         Contact
     </a>    
+    @if (User.IsInRole("Admin"))
+    {
+        <a asp-controller="Admin"
+           asp-action="Index"
+           onclick="w3_close()"
+           class="w3-bar-item w3-button">
+            Admin
+        </a>
+        <a asp-controller="Editors"
+           asp-action="Index"
+           onclick="w3_close()"
+           class="w3-bar-item w3-button">
+            Editors
+        </a>
+    }
 </nav>

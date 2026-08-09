@@ -1,0 +1,32 @@
+﻿@model CatShelter.ViewModels.Editors.DeleteEditorViewModel
+
+@{
+    ViewData["Title"] = "Delete Editor";
+}
+
+<div class="w3-container w3-margin-bottom" style="max-width:600px; margin:auto; padding-top:80px;">
+
+    <h2>Delete Editor</h2>
+
+    <p>Are you sure you want to delete editor <strong>@Model.Email</strong>?</p>
+
+    <div asp-validation-summary="ModelOnly" class="w3-text-red"></div>
+
+    <form asp-action="DeleteConfirmed" method="post">
+
+        <input type="hidden"
+               name="id"
+               value="@Model.Id" />
+
+
+        <button type="submit"
+                class="w3-button w3-red">
+            Delete
+        </button>
+        <a asp-action="Index"
+           class="w3-button w3-light-grey">
+            Cancel
+        </a>
+
+    </form>
+</div>

@@ -24,3 +24,14 @@ function w3_open() {
 function w3_close() {
     document.getElementById("mySidebar").style.display = "none";
 }
+
+// Eye
+function togglePassword(id) {
+    const input = document.getElementById(id);
+
+    if (input.type === "password") {
+        input.type = "text";
+    } else {
+        input.type = "password";
+    }
+}

@@ -1,4 +1,5 @@
 using CatShelter.Data;
+using CatShelter.Data.Seed;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -6,7 +7,7 @@ namespace CatShelter
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -17,10 +18,17 @@ namespace CatShelter
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
             builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
             var app = builder.Build();
+
+            // Seed Identity roles and admin user
+            using (var scope = app.Services.CreateScope())
+            {
+                await IdentitySeeder.SeedAsync(scope.ServiceProvider, app.Configuration);
+            }
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())

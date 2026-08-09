@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Admin";
+}
+
+<div class="w3-container w3-margin-bottom" style="max-width:600px; margin:auto; padding-top:80px;">
+    <h1>Admin Panel</h1>
+    <p>You are logged in as Admin.</p>
+
+    <form asp-area="Identity"
+          asp-page="/Account/Logout"
+          asp-route-returnUrl="@Url.Action("Index", "Home")"
+          method="post">
+
+        <button type="submit">
+            Logout
+        </button>
+
+    </form>
+</div>
+

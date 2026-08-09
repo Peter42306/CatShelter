@@ -1,0 +1,48 @@
+﻿@model IList<Microsoft.AspNetCore.Identity.IdentityUser>
+
+@{
+    ViewData["Title"] = "Editors";
+}
+
+<div class="w3-container" style="max-width:600px; margin:auto; padding-top:80px;">
+
+    <h2>Editors</h2>
+    <a asp-action="Create"
+       class="w3-button w3-green">
+        Create Editor
+    </a>
+    <hr/>
+    
+
+    @if (!Model.Any())
+    {
+        <p>No Editors created yet</p>
+    }
+    else
+    {
+        <table class="w3-table w3-bordered w3-striped w3-margin-bottom">
+            <thead>
+                <tr>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var editor in Model)
+                {
+                    <tr>
+                        <td>@editor.Email</td>
+
+                        <td>
+                            <a asp-action="Delete"
+                               asp-route-id="@editor.Id"
+                               class="w3-button w3-small w3-blue">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

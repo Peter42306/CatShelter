@@ -24,6 +24,10 @@ namespace CatShelter.Models.Animal
 
         public string? Features { get; set; }
 
+        public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
+
+        public int? SortOrder { get; set; }
+
         public Status Status { get; set; }
 
         public ICollection<Photo> Photos { get; set; } = [];
@@ -54,11 +58,10 @@ namespace CatShelter.Models.Animal
 
             totalMonths = Math.Max(0,totalMonths);
 
-            return new Age
-            {
-                Years = totalMonths / 12,
-                Months = totalMonths % 12
-            };
+            var years = totalMonths / 12;
+            var months = totalMonths % 12;
+
+            return new Age(years, months);
         }
     }   
 }

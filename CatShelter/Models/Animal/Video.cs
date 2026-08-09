@@ -10,6 +10,10 @@
 
         public string? Comment { get; set; }
 
+        public DateTime CreatedAtUtc { get; set; } = DateTime.UtcNow;
+
+        public int? SortOrder { get; set; }
+
         public Animal Animal { get; set; } = null!;
     }
 }

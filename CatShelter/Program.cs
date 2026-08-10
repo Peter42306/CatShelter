@@ -1,5 +1,7 @@
 using CatShelter.Data;
 using CatShelter.Data.Seed;
+using CatShelter.Options;
+using CatShelter.Services.PhotoStorage;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -10,6 +12,9 @@ namespace CatShelter
         public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
+            builder.Services.Configure<S3Options>(builder.Configuration.GetSection("Storage:S3"));
+            builder.Services.AddScoped<IPhotoStorage, S3PhotoStorage>();
 
             // Add services to the container.
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");

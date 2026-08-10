@@ -34,5 +34,7 @@ namespace CatShelter.ViewModels.Animals
         public int? SortOrder { get; set; }
 
         public Status Status { get; set; } = Status.Available;
+
+        public List<PhotoViewModel> Photos { get; set; } = [];        
     }
 }

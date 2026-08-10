@@ -52,11 +52,7 @@ namespace CatShelter.Data
                     .HasMaxLength(500);
 
                 entity.Property(x => x.Comment)
-                    .HasMaxLength(5000);
-
-                entity.HasIndex(x => x.AnimalId)
-                    .IsUnique()
-                    .HasFilter(""" "IsMain" = true """);
+                    .HasMaxLength(5000);                
             });
 
             builder.Entity<Video>(entity =>

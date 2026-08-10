@@ -1,0 +1,109 @@
+﻿@model CatShelter.ViewModels.Animals.CreateAnimalViewModel
+
+@{
+    ViewData["Title"] = "Create Animal";
+}
+
+<div class="w3-container"
+     style="max-width:700px; margin:auto; padding:64px 16px;">
+    
+     <h2>Create Animal</h2>
+
+     <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="w3-text-red"></div>
+
+        <div class="w3-margin-bottom">
+            <label asp-for="Name"></label>
+            <input asp-for="Name"
+                   class="w3-input w3-border" />
+            <span asp-validation-for="Name" class="w3-text-red"></span>
+        </div>
+        <div class="w3-margin-bottom">
+            <label asp-for="Sex"></label>
+            <select asp-for="Sex"
+                    asp-items="Html.GetEnumSelectList<CatShelter.Models.Animal.Sex>()"
+                    class="w3-select w3-border">
+            </select>
+        </div>
+        <div class="w3-margin-bottom">
+            <label asp-for="BirthDate"></label>
+            <input asp-for="BirthDate"
+                   type="date"
+                   class="w3-input w3-border" />
+            <span asp-validation-for="BirthDate" class="w3-text-red"></span>
+        </div>
+        <div class="w3-margin-bottom">
+            <label>
+                <input asp-for="IsBirthDateApproximate"
+                       class="w3-check" />
+                Approximate birth date
+            </label>
+        </div>
+        <div class="w3-margin-bottom">
+            <label>
+                <input asp-for="IsSterilized"
+                       class="w3-check" />
+                Sterilized
+            </label>
+        </div>
+        <div class="w3-margin-bottom">
+            <label>
+                <input asp-for="IsVaccinated"
+                       class="w3-check" />
+                Vaccinated
+            </label>
+        </div>
+        <div class="w3-margin-bottom">
+            <label asp-for="ShortDescription"></label>
+            <textarea asp-for="ShortDescription"
+                      rows="2"
+                      class="w3-input w3-border">
+            </textarea>
+        </div>
+        <div class="w3-margin-bottom">
+            <label asp-for="Story"></label>
+            <textarea asp-for="Story"
+                      rows="2"
+                      class="w3-input w3-border">
+            </textarea>
+        </div>
+        <div class="w3-margin-bottom">
+            <label asp-for="Features"></label>
+            <textarea asp-for="Features"
+                      rows="2"
+                      class="w3-input w3-border">
+            </textarea>
+        </div>
+        <div class="w3-margin-bottom">
+            <label asp-for="Status"></label>
+            <select asp-for="Status"
+                    asp-items="Html.GetEnumSelectList<CatShelter.Models.Animal.Status>()"
+                    class="w3-select w3-border">
+            </select>
+        </div>
+        <div class="w3-margin-bottom">
+            <label asp-for="SortOrder">Display priority</label>
+            <input asp-for="SortOrder"
+                   type="number"
+                   min="1"
+                   class="w3-input w3-border" />
+
+            <small>
+                Leave empty for normal ordering.
+            </small>
+        </div>
+
+        <button type="submit"
+                class="w3-button w3-green">
+            Create
+        </button>
+        <a asp-action="Index"
+           class="w3-button w3-light-grey">
+            Back
+        </a>
+     </form>    
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

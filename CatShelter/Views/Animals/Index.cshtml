@@ -1,0 +1,72 @@
+﻿@model IEnumerable<CatShelter.Models.Animal.Animal>
+
+@{
+    ViewData["Title"] = "Animals";
+}
+
+<div class="w3-container"
+     style="max-width:1000px; margin:auto; padding:64px 16px;">
+
+    <h2>Animals</h2>
+    <a asp-action="Create"
+       class="w3-button w3-green">
+        Create Animal
+    </a>
+    <hr />
+
+    @if (!Model.Any())
+    {
+        <p>No animals created yet</p>
+    }
+    else
+    {
+        <table class="w3-table w3-bordered w3-striped w3-margin-bottom">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Sex</th>
+                    <th>Age</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Actions</th>
+                </tr>                
+            </thead>
+            <tbody>
+                @foreach (var animal in Model)
+                {
+                    <tr>
+                        <td>@animal.Name</td>
+                        <td>@animal.Sex</td>
+                        <td>
+                            @if (animal.Age is not null)
+                            {
+                                <span>
+                                    @animal.Age.Years years
+                                    @animal.Age.Months months
+                                </span>
+                            }
+                            else
+                            {
+                                <span>Unknown</span>
+                            }
+                        </td>
+                        <td>@animal.Status</td>
+                        <td>@animal.SortOrder</td>
+                        <td>
+                            <a asp-action="Edit"
+                               asp-route-id="@animal.Id"
+                               class="w3-button w3-small w3-green">
+                                Edit
+                            </a>
+                            <a asp-action="Delete"
+                               asp-route-id="@animal.Id"
+                               class="w3-button w3-small w3-red">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                }                
+            </tbody>
+        </table>
+    }
+</div>

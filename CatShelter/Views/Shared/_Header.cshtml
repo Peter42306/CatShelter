@@ -31,6 +31,11 @@
             </a>
             @if (User.IsInRole("Admin"))
             {
+                <a asp-controller="Animals"
+                   asp-action="Index"
+                   class="w3-bar-item w3-button">
+                    Animals
+                </a>
                 <a asp-controller="Admin"
                    asp-action="Index"                   
                    class="w3-bar-item w3-button">
@@ -92,6 +97,12 @@
     </a>    
     @if (User.IsInRole("Admin"))
     {
+        <a asp-controller="Animals"
+           asp-action="Index"
+           onclick="w3_close()"
+           class="w3-bar-item w3-button">
+            Animals
+        </a>
         <a asp-controller="Admin"
            asp-action="Index"
            onclick="w3_close()"

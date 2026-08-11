@@ -91,14 +91,13 @@ namespace CatShelter.Controllers
         {
             var animal = await _context.Animals
                 .Include(x => x.Photos)
+                .Include(x => x.Videos)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             if (animal is null)
             {
                 return NotFound();
             }
-
-            
 
             var model = new EditAnimalViewModel
             {
@@ -129,7 +128,21 @@ namespace CatShelter.Controllers
                         SortOrder = x.SortOrder,
                         CreatedAtUtc = x.CreatedAtUtc
                     })
-                    .ToList()
+                    .ToList(),
+
+                Videos = animal.Videos
+                    .OrderBy(x => x.SortOrder == null)
+                    .ThenBy(x => x.SortOrder)
+                    .ThenByDescending(x => x.CreatedAtUtc)
+                    .Select(x => new VideoViewModel
+                    {
+                        Id = x.Id,
+                        Url = x.Url,
+                        EmbedUrl = GetYoutubeEmbedUrl(x.Url) ?? string.Empty,
+                        Comment = x.Comment,
+                        SortOrder= x.SortOrder,
+                        CreatedAtUtc= x.CreatedAtUtc
+                    }).ToList()
             };
 
             return View(model);
@@ -433,6 +446,123 @@ namespace CatShelter.Controllers
             return RedirectToAction(nameof(Edit), new { id = photo.AnimalId });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddVideo(
+            AddVideoViewModel model,
+            CancellationToken ct)
+        {
+            var animalExists = await _context.Animals
+                .AnyAsync(x => x.Id == model.AnimalId, ct);
+
+            if (!animalExists)
+            {
+                return NotFound();
+            }
+
+            if (string.IsNullOrWhiteSpace(model.Url))
+            {
+                ModelState.AddModelError(
+                    nameof(model.Url),
+                    "Video URL is required.");
+            }
+
+            var videoId = GetYouTubeVideoId(model.Url);
+
+            if (videoId is null)
+            {
+                ModelState.AddModelError(
+                    nameof(model.Url),
+                    "Enter a valid YouTube URL.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                return RedirectToAction(
+                    nameof(Edit),
+                    new { id = model.AnimalId });
+            }
+
+            var video = new Video
+            {
+                AnimalId = model.AnimalId,
+                Url = model.Url,
+                Comment = model.Comment,
+                SortOrder = model.SortOrder
+            };
+
+            _context.Videos.Add(video);
+
+            await _context.SaveChangesAsync(ct);
+
+            return RedirectToAction(nameof(Edit), new { id = model.AnimalId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditVideo(
+            EditVideoViewModel model,
+            CancellationToken ct)
+        {
+            var video = await _context.Videos
+                .FirstOrDefaultAsync(x => x.Id == model.Id, ct);
+
+            if (video is null)
+            {
+                return NotFound();
+            }
+
+            if (video.AnimalId != model.AnimalId)
+            {
+                return BadRequest();
+            }
+
+            var videoId = GetYouTubeVideoId(model.Url);
+
+            if (videoId is null)
+            {
+                ModelState.AddModelError(
+                    nameof(model.Url),
+                    "Enter a valid YouTube URL.");
+
+                return RedirectToAction(
+                    nameof(Edit),
+                    new { id = model.AnimalId });
+            }
+
+            video.Url = model.Url.Trim();
+            video.Comment = model.Comment;
+            video.SortOrder = model.SortOrder;
+
+            await _context.SaveChangesAsync(ct);
+
+            return RedirectToAction(
+                nameof(Edit),
+                new { id = video.AnimalId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteVideo(
+            int videoId,
+            CancellationToken ct)
+        {
+            var video = _context.Videos.FirstOrDefault(x => x.Id == videoId);
+
+            if (video is null)
+            {
+                return NotFound();
+            }
+
+            var animalId = video.AnimalId;
+
+            _context.Videos.Remove(video);
+
+            await _context.SaveChangesAsync(ct);
+
+            return RedirectToAction(nameof(Edit), new { id = animalId });
+        }
+
         // Helpers
         private void ValidateBirthdate(DateOnly? birthDate)
         {
@@ -442,6 +572,43 @@ namespace CatShelter.Controllers
                 ModelState.AddModelError(
                     "BirthDate", "Birth date cannot be in the future.");
             }
+        }
+
+        private static string? GetYouTubeVideoId(string url)
+        {
+            if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            {
+                return null;
+            }
+
+            if (uri.Host.Contains("youtu.be", StringComparison.OrdinalIgnoreCase))
+            {
+                return uri.AbsolutePath.Trim('/');
+            }
+
+            if (uri.Host.Contains("youtube.com", StringComparison.OrdinalIgnoreCase))
+            {
+                var query = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(uri.Query);
+
+                if (query.TryGetValue("v", out var videoId))
+                {
+                    return videoId.ToString();
+                }
+            }
+
+            return null;
+        }
+
+        private static string? GetYoutubeEmbedUrl(string url)
+        {
+            var videoId = GetYouTubeVideoId(url);
+
+            if (string.IsNullOrWhiteSpace(videoId))
+            {
+                return null;
+            }
+
+            return $"https://www.youtube.com/embed/{videoId}";
         }
     }
 }

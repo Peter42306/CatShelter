@@ -35,6 +35,8 @@ namespace CatShelter.ViewModels.Animals
 
         public Status Status { get; set; } = Status.Available;
 
-        public List<PhotoViewModel> Photos { get; set; } = [];        
+        public List<PhotoViewModel> Photos { get; set; } = [];
+
+        public List<VideoViewModel> Videos { get; set; } = [];
     }
 }

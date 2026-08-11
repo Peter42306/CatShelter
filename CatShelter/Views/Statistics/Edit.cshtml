@@ -1,0 +1,42 @@
+﻿@model CatShelter.ViewModels.Statistics.EditStatisticsViewModel
+
+@{
+    ViewData["Title"] = "Statistics";
+}
+
+<div class="w3-container"
+     style="max-width:700px; margin:auto; padding:64px 16px;">
+
+    <h2>Statistics</h2>
+
+    <form asp-action="Edit" method="post">
+
+        <div class="w3-margin-bottom">
+            <label asp-for="CurrentAnimals">
+                Current animals
+            </label>
+
+            <input asp-for="CurrentAnimals"
+                   type="number"
+                   min="0"
+                   class="w3-input w3-border" />
+        </div>
+
+        <div class="w3-margin-bottom">
+            <label asp-for="FoundHomes">
+                Found homes
+            </label>
+
+            <input asp-for="FoundHomes"
+                   type="number"
+                   min="0"
+                   class="w3-input w3-border" />
+        </div>
+
+        <button type="submit"
+                class="w3-button w3-green">
+            Save
+        </button>
+
+    </form>
+</div>

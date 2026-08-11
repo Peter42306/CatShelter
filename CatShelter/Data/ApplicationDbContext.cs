@@ -1,4 +1,5 @@
 ﻿using CatShelter.Models.Animal;
+using CatShelter.Models.Statistics;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +15,7 @@ namespace CatShelter.Data
         public DbSet<Animal> Animals => Set<Animal>();
         public DbSet<Photo> Photos => Set<Photo>();
         public DbSet<Video> Videos => Set<Video>();
+        public DbSet<Statistics> Statistics => Set<Statistics>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

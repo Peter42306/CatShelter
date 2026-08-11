@@ -1,4 +1,6 @@
-﻿@{
+﻿@model CatShelter.ViewModels.Home.HomeViewModel
+
+@{
     ViewData["Title"] = "ЛУ-КОШКА — помощь бездомным котикам в Одессе";
 }
 
@@ -7,7 +9,7 @@
 <partial name="Partials/_About" />
 <partial name="Partials/_Pets" />
 <partial name="Partials/_Gallery" />
-<partial name="Partials/_Stats" />
+<partial name="Partials/_Stats" model="Model.Statistics"/>
 <partial name="Partials/_Blog" />
 <partial name="Partials/_FAQ" />
 <partial name="Partials/_Contacts" />

@@ -36,6 +36,11 @@
                    class="w3-bar-item w3-button">
                     Animals
                 </a>
+                <a asp-controller="Statistics"
+                   asp-action="Edit"
+                   class="w3-bar-item w3-button">
+                    Stats
+                </a>
                 <a asp-controller="Admin"
                    asp-action="Index"                   
                    class="w3-bar-item w3-button">
@@ -102,6 +107,12 @@
            onclick="w3_close()"
            class="w3-bar-item w3-button">
             Animals
+        </a>
+        <a asp-controller="Statistics"
+           asp-action="Edit"
+           onclick="w3_close()"
+           class="w3-bar-item w3-button">
+            Stats
         </a>
         <a asp-controller="Admin"
            asp-action="Index"

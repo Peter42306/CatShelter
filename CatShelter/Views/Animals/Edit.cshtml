@@ -146,7 +146,11 @@
             {
                 <div class="w3-col l4 m6 s12 w3-margin-bottom">
                     <div class="w3-card">
-                        <img src="@photo.Url" style="max-width:100%; height:auto" />
+                        <img src="@photo.Url"
+                             class="gallery-photo"
+                             onload="setPhotoOrientation(this)"
+                             alt="Animal photo" />
+
                         <div class="w3-container">
                             @if (photo.IsMain)
                             {

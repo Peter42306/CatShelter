@@ -41,6 +41,11 @@
                    class="w3-bar-item w3-button">
                     Stats
                 </a>
+                <a asp-controller="Gallery"
+                   asp-action="Index"
+                   class="w3-bar-item w3-button">
+                    Gallery
+                </a>
                 <a asp-controller="Admin"
                    asp-action="Index"                   
                    class="w3-bar-item w3-button">
@@ -90,6 +95,11 @@
        class="w3-bar-item w3-button">
         Pets
     </a>
+    <a href="/#gallery"
+       onclick="w3_close()"
+       class="w3-bar-item w3-button">
+        Gallery
+    </a>
     <a href="/#blog"
        onclick="w3_close()"
        class="w3-bar-item w3-button">
@@ -113,6 +123,12 @@
            onclick="w3_close()"
            class="w3-bar-item w3-button">
             Stats
+        </a>
+        <a asp-controller="Gallery"
+           asp-action="Index"
+           onclick="w3_close()"
+           class="w3-bar-item w3-button">
+            Gallery
         </a>
         <a asp-controller="Admin"
            asp-action="Index"

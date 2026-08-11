@@ -5,15 +5,15 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: "Raleway", sans-serif;
+    font-family: "Montserrat", sans-serif;
 }
 
-html,
+/*html,
 body {
     height: 100%;
     line-height: 1.8;
     margin: 0;
-}
+}*/
 
 /* Navbar */
 .w3-bar .w3-button {
@@ -103,4 +103,26 @@ body {
 
 html {
     scroll-behavior: smooth;
+}
+
+/*.gallery-photo {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+}*/
+
+.gallery-photo {
+    max-width: 100%;
+    height:auto;
+    /*object-fit: cover;
+    display: block;*/
+}
+
+.gallery-photo.landscape {
+    aspect-ratio: 16 / 9;
+}
+
+.gallery-photo.portrait {
+    aspect-ratio: 9 / 16;
 }

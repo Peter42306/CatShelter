@@ -34,7 +34,17 @@ namespace CatShelter.Controllers
                 .ThenByDescending(x => x.CreatedAtUtc)
                 .ToListAsync();
 
-            return View(animals);
+            var model = animals.Select(x => new AnimalsIndexViewModel
+            {
+                Id = x.Id,
+                Name = x.Name,
+                Sex = x.Sex,
+                Age = x.Age,
+                Status = x.Status,
+                SortOrder = x.SortOrder
+            }).ToList();
+
+            return View(model);
         }
 
         [HttpGet]
@@ -303,7 +313,7 @@ namespace CatShelter.Controllers
                 {
                     var storageKey = await _photoStorage.UploadAsync(
                         file,
-                        model.AnimalId,
+                        $"animals/{model.AnimalId}",
                         ct);
 
                     uploadedKeys.Add(storageKey);                    

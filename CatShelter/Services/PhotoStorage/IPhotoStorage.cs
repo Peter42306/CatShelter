@@ -4,7 +4,7 @@
     {
         Task<string> UploadAsync(
             IFormFile file,
-            int animalId,
+            string folder,            
             CancellationToken ct = default);
 
         Task DeleteAsync(

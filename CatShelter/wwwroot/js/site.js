@@ -35,3 +35,11 @@ function togglePassword(id) {
         input.type = "password";
     }
 }
+
+function setPhotoOrientation(img) {
+    if (img.naturalWidth >= img.naturalHeight) {
+        img.classList.add('landscape');
+    } else {
+        img.classList.add('portrait');
+    }
+}

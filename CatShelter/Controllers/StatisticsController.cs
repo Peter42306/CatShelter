@@ -20,7 +20,7 @@ namespace CatShelter.Controllers
         [HttpGet]        
         public async Task<IActionResult> Edit()
         {
-            var statistics = await _context.Statistics.FirstOrDefaultAsync();
+            var statistics = await _context.Statistics.FirstOrDefaultAsync(x => x.Id == 1);
 
             var model = statistics is null
                 ? new EditStatisticsViewModel()
@@ -44,11 +44,14 @@ namespace CatShelter.Controllers
                 return View(model);
             }
 
-            var statistics = await _context.Statistics.FirstOrDefaultAsync();
+            var statistics = await _context.Statistics.FirstOrDefaultAsync(x => x.Id == 1, ct);
 
             if (statistics is null)
             {
-                statistics = new Statistics();
+                statistics = new Statistics
+                {
+                    Id = 1
+                };
 
                 _context.Statistics.Add(statistics);
             }

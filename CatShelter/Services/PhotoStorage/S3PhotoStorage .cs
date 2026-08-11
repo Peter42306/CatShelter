@@ -29,16 +29,17 @@ namespace CatShelter.Services.PhotoStorage
             _s3Client = new AmazonS3Client(
                 credentials,
                 config);
-        }
+        }        
+        
 
         public async Task<string> UploadAsync(
-            IFormFile file, 
-            int animalId, 
+            IFormFile file,
+            string folder, 
             CancellationToken ct = default)
         {
             var extension = Path.GetExtension(file.FileName);
 
-            var storageKey = $"animals/{animalId}/{Guid.NewGuid():N}{extension}";
+            var storageKey = $"{folder}/{Guid.NewGuid():N}{extension}";
 
             await using var stream = file.OpenReadStream();
 
@@ -72,5 +73,7 @@ namespace CatShelter.Services.PhotoStorage
         {
             return $"{_options.ServiceUrl.TrimEnd('/')}/{_options.Bucket}/{storageKey}";
         }
+
+        
     }
 }

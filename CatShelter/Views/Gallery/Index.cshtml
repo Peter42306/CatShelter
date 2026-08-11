@@ -1,0 +1,164 @@
+﻿@model List<CatShelter.ViewModels.Gallery.GalleryPhotoViewModel>
+
+@{
+    ViewData["Title"] = "Gallery";
+}
+
+<div class="w3-container"
+     style="max-width:700px; margin:auto; padding:64px 16px;">
+
+    <h2>Gallery</h2>
+
+    <form asp-action="AddPhotos"
+          method="post"
+          enctype="multipart/form-data">
+
+        <div class="w3-margin-bottom">
+            <label>Select photos</label>
+
+            <input type="file"
+                   name="Files"
+                   multiple
+                   accept=".jpg,.jpeg,.png,.webp"
+                   class="w3-input w3-border" />
+
+            <span class="w3-text-red">
+                @Html.ValidationMessage("Files")
+            </span>
+
+            <small>
+                Up to 10 photos. Maximum 10 MB per photo.
+            </small>
+        </div>
+
+        <button type="submit"
+                class="w3-button w3-green">
+            Upload Photos
+        </button>
+    </form>
+
+    <hr>
+    
+</div>
+
+@if (Model.Count == 0)
+{
+    <p>No photos uploaded yet.</p>
+}
+else
+{
+    <div class="w3-row-padding w3-margin-top">
+        @foreach (var photo in Model)
+        {
+            <div class="w3-col l4 m6 s12 w3-margin-bottom">
+                <div class="w3-card">
+                    <img src="@photo.Url"
+                         class="gallery-photo"
+                         onload="setPhotoOrientation(this)"
+                         alt="Gallery photo" />
+
+                    <div class="w3-container">
+                        @if (!string.IsNullOrWhiteSpace(photo.Comment))
+                        {
+                            <p>@photo.Comment</p>
+                        }
+
+                        <p>
+                            Priority: @(photo.SortOrder?.ToString() ?? "-")
+                        </p>
+
+                        <div class="w3-margin-bottom w3-center">
+                            <button type="button"
+                                    class="w3-button w3-blue"
+                                    onclick="document.getElementById('edit-gallery-photo-@photo.Id').style.display='block'">
+                                Edit
+                            </button>
+
+                            <form asp-action="DeletePhoto"
+                                  method="post"
+                                  style="display:inline;"
+                                  onsubmit="return confirm('Are you sure you want to delete this photo?');">
+
+                                <input type="hidden"
+                                       name="photoId"
+                                       value="@photo.Id" />
+
+                                <button type="submit"
+                                        class="w3-button w3-red">
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>                   
+
+                </div>
+            </div>
+
+            // Model for edit
+            <div id="edit-gallery-photo-@photo.Id"
+                 class="w3-modal">
+
+                <div class="w3-modal-content"
+                     style="max-width:600px; padding:32px 16px;">
+
+                    <div class="w3-container">
+
+                        <span class="w3-button w3-display-topright"
+                              onclick="document.getElementById('edit-gallery-photo-@photo.Id').style.display='none'">
+                            &times;
+                        </span>
+
+                        <h3>Edit Gallery Photo</h3>
+
+                        <form asp-action="EditPhoto"
+                              method="post">
+
+                            <input type="hidden"
+                                   name="Id"
+                                   value="@photo.Id" />
+
+                            <div class="w3-margin-bottom">
+                                <label>Comment</label>
+
+                                <textarea name="Comment"
+                                  rows="3"
+                                  class="w3-input w3-border">@photo.Comment</textarea>
+                            </div>
+
+                            <div class="w3-margin-bottom">
+                                <label>Priority</label>
+
+                                <input type="number"
+                                       name="SortOrder"
+                                       min="1"
+                                       value="@photo.SortOrder"
+                                       class="w3-input w3-border" />
+                            </div>
+
+                            <button type="submit"
+                                    class="w3-button w3-green">
+                                Save
+                            </button>
+
+                            <button type="button"
+                                    class="w3-button w3-light-grey"
+                                    onclick="document.getElementById('edit-gallery-photo-@photo.Id').style.display='none'">
+                                Cancel
+                            </button>
+
+                        </form>
+
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+}
+
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

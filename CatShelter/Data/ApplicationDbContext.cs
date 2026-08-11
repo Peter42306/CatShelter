@@ -1,4 +1,5 @@
 ﻿using CatShelter.Models.Animal;
+using CatShelter.Models.Gallery;
 using CatShelter.Models.Statistics;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +17,7 @@ namespace CatShelter.Data
         public DbSet<Photo> Photos => Set<Photo>();
         public DbSet<Video> Videos => Set<Video>();
         public DbSet<Statistics> Statistics => Set<Statistics>();
+        public DbSet<GalleryPhoto> GalleryPhotos => Set<GalleryPhoto>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -65,6 +67,16 @@ namespace CatShelter.Data
 
                 entity.Property(x => x.Comment)
                     .HasMaxLength(5000);                
+            });
+
+            builder.Entity<GalleryPhoto>(entity =>
+            {
+                entity.Property(x => x.StorageKey)
+                    .IsRequired()
+                    .HasMaxLength(500);
+
+                entity.Property(x => x.Comment)
+                    .HasMaxLength(5000);
             });
 
         }

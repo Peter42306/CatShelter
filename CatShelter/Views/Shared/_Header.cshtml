@@ -33,27 +33,32 @@
             {
                 <a asp-controller="Animals"
                    asp-action="Index"
-                   class="w3-bar-item w3-button">
+                   class="w3-bar-item w3-button w3-text-red">
                     Animals
                 </a>
                 <a asp-controller="Statistics"
                    asp-action="Edit"
-                   class="w3-bar-item w3-button">
+                   class="w3-bar-item w3-button w3-text-red">
                     Stats
                 </a>
                 <a asp-controller="Gallery"
                    asp-action="Index"
-                   class="w3-bar-item w3-button">
+                   class="w3-bar-item w3-button w3-text-red">
                     Gallery
                 </a>
+                <a asp-controller="Blog"
+                   asp-action="Index"
+                   class="w3-bar-item w3-button w3-text-red">
+                    Blog
+                </a>
                 <a asp-controller="Admin"
-                   asp-action="Index"                   
-                   class="w3-bar-item w3-button">
+                   asp-action="Index"
+                   class="w3-bar-item w3-button w3-text-red">
                     Admin
                 </a>
                 <a asp-controller="Editors"
                    asp-action="Index"
-                   class="w3-bar-item w3-button">
+                   class="w3-bar-item w3-button w3-text-red">
                     Editors
                 </a>
             }
@@ -115,31 +120,37 @@
         <a asp-controller="Animals"
            asp-action="Index"
            onclick="w3_close()"
-           class="w3-bar-item w3-button">
+           class="w3-bar-item w3-button w3-text-red">
             Animals
         </a>
         <a asp-controller="Statistics"
            asp-action="Edit"
            onclick="w3_close()"
-           class="w3-bar-item w3-button">
+           class="w3-bar-item w3-button w3-text-red">
             Stats
         </a>
         <a asp-controller="Gallery"
            asp-action="Index"
            onclick="w3_close()"
-           class="w3-bar-item w3-button">
+           class="w3-bar-item w3-button w3-text-red">
             Gallery
+        </a>
+        <a asp-controller="Blog"
+           asp-action="Index"
+           onclick="w3_close()"
+           class="w3-bar-item w3-button w3-text-red">
+            Blog
         </a>
         <a asp-controller="Admin"
            asp-action="Index"
            onclick="w3_close()"
-           class="w3-bar-item w3-button">
+           class="w3-bar-item w3-button w3-text-red">
             Admin
         </a>
         <a asp-controller="Editors"
            asp-action="Index"
            onclick="w3_close()"
-           class="w3-bar-item w3-button">
+           class="w3-bar-item w3-button w3-text-red">
             Editors
         </a>
     }

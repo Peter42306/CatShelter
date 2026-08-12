@@ -1,0 +1,48 @@
+﻿@model CatShelter.ViewModels.Blog.EditBlogParagraphViewModel
+
+@{
+    ViewData["Title"] = "Edit Paragraph";
+}
+
+<div class="w3-container"
+     style="max-width:900px; margin:auto; padding:64px 16px;">
+
+    <h2>Edit Paragraph</h2>
+
+    <form asp-action="EditParagraph"
+          method="post">
+
+        <input asp-for="Id" type="hidden" />
+        <input asp-for="BlogPostId" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly"
+             class="w3-text-red"></div>
+
+        <div class="w3-margin-bottom">
+            <label asp-for="Text"></label>
+
+            <textarea asp-for="Text"
+                      rows="10"
+                      class="w3-input w3-border"></textarea>
+
+            <span asp-validation-for="Text"
+                  class="w3-text-red"></span>
+        </div>
+
+        <button type="submit"
+                class="w3-button w3-green">
+            Save
+        </button>
+
+        <a asp-action="Edit"
+           asp-route-id="@Model.BlogPostId"
+           class="w3-button w3-light-grey">
+            Back
+        </a>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

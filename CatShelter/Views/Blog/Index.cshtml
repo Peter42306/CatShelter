@@ -1,0 +1,81 @@
+﻿@model List<CatShelter.ViewModels.Blog.BlogIndexViewModel>
+
+@{
+    ViewData["Title"] = "Blog";
+}
+
+<div class="w3-container page-content"
+     style="max-width:900px; margin:auto; padding:64px 16px;">
+
+    <div class="w3-margin-bottom">
+        <h2>Blog</h2>
+
+        <a asp-action="Create"
+           class="w3-button w3-green">
+            Add Post
+        </a>
+    </div>
+
+    @if (Model.Count == 0)
+    {
+        <p>No blog posts yet.</p>
+    }
+    else
+    {
+        <div class="w3-responsive">
+            <table class="w3-table w3-bordered w3-striped">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Created</th>
+                        <th>Published</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @foreach (var post in Model)
+                    {
+                        <tr>
+                            <td>@post.Title</td>
+
+                            <td>
+                                @(post.IsPublished ? "Published" : "Draft")
+                            </td>
+
+                            <td>
+                                @post.CreatedAtUtc.ToLocalTime().ToString("dd.MM.yyyy")
+                            </td>
+
+                            <td>
+                                @if (post.PublishedAtUtc.HasValue)
+                                {
+                                    @post.PublishedAtUtc.Value.ToLocalTime().ToString("dd.MM.yyyy")
+                                                        }
+                                else
+                                {
+                                    <span>-</span>
+                                }
+                            </td>
+
+                            <td>
+                                <a asp-action="Edit"
+                                   asp-route-id="@post.Id"
+                                   class="w3-button w3-small w3-blue">
+                                    Edit
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@post.Id"
+                                   class="w3-button w3-small w3-red">
+                                    Delete
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

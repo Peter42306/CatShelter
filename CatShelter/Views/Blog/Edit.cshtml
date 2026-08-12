@@ -1,0 +1,257 @@
+﻿@model CatShelter.ViewModels.Blog.EditBlogPostViewModel
+
+@{
+    ViewData["Title"] = "Edit Blog Post";
+}
+
+<div class="w3-container"
+     style="max-width:1000px; margin:auto; padding:64px 16px;">
+
+    <h2>Edit Blog Post</h2>
+
+    <form asp-action="Edit"
+          method="post">
+
+        <input asp-for="Id" type="hidden" />
+
+        <div asp-validation-summary="ModelOnly"
+             class="w3-text-red"></div>
+
+        <div class="w3-margin-bottom">
+            <label asp-for="Title"></label>
+
+            <input asp-for="Title"
+                   class="w3-input w3-border" />
+
+            <span asp-validation-for="Title"
+                  class="w3-text-red"></span>
+        </div>
+
+        <div class="w3-margin-bottom">
+            <label asp-for="Summary"></label>
+
+            <textarea asp-for="Summary"
+                      rows="3"
+                      class="w3-input w3-border"></textarea>
+
+            <span asp-validation-for="Summary"
+                  class="w3-text-red"></span>
+
+            <small>
+                Short text shown in the blog card.
+            </small>
+        </div>
+
+        <div class="w3-margin-bottom">
+            <label>
+                <input asp-for="IsPublished"
+                       class="w3-check" />
+                Published
+            </label>
+        </div>
+
+        @if (Model.PublishedAtUtc is not null)
+        {
+            <p>
+                Published:
+                @Model.PublishedAtUtc.Value.ToLocalTime()
+            </p>
+        }
+
+        <button type="submit"
+                class="w3-button w3-green">
+            Save
+        </button>
+
+        <a asp-action="Index"
+           class="w3-button w3-light-grey">
+            Back
+        </a>
+    </form>
+
+    <hr>
+
+    <h3>Content</h3>
+
+    @if (Model.Blocks.Count == 0)
+    {
+        <p>No content blocks yet.</p>
+    }
+    else
+    {
+        @foreach (var block in Model.Blocks)
+        {
+            <div class="w3-card w3-margin-bottom">
+                <div class="w3-container w3-padding">
+
+                    <div>
+                        <div class="w3-left">
+                            <p>
+                                <strong>
+                                    @block.SortOrder.
+                                    @block.Type
+                                </strong>
+                            </p>
+                        </div>
+                        <div class="w3-right">
+
+                            @if (block.Type == CatShelter.Models.Blog.BlogBlockType.Paragraph)
+                            {
+                                <a asp-action="EditParagraph"
+                                   asp-route-id="@block.Id"
+                                   class="w3-button w3-blue">
+                                    Edit
+                                </a>
+                            }
+
+                            <form asp-action="DeleteBlock"
+                                  asp-route-id="@block.Id"
+                                  method="post"
+                                  style="display:inline;">
+
+                                <button type="submit"
+                                        class="w3-button w3-red"
+                                        onclick="return confirm('Delete this block?');">
+                                    Delete
+                                </button>
+                            </form>                            
+                                                        
+                        </div>
+                        <div class="w3-clear"></div>
+                    </div>
+
+
+
+                    @if (block.Type == CatShelter.Models.Blog.BlogBlockType.Paragraph)
+                    {
+                        <p>@block.Text</p>
+                    }
+                    else if (block.Type == CatShelter.Models.Blog.BlogBlockType.Photo)
+                    {
+                        <img src="@block.Url"
+                             alt="Blog photo"
+                             style="max-width:100%; height:auto;" />
+                    }
+
+                </div>
+            </div>
+        }
+    }
+
+    <hr>
+
+    <h3>Add content</h3>
+
+    <button type="button"
+            class="w3-button w3-blue"
+            onclick="document.getElementById('add-paragraph-modal').style.display='block'">
+        Add Paragraph
+    </button>
+    <button type="button"
+            class="w3-button w3-green"
+            onclick="document.getElementById('add-photo-modal').style.display='block'">
+        Add Photo
+    </button>
+
+    <!-- Modal for paragraph add -->
+    <div id="add-paragraph-modal"
+         class="w3-modal">
+
+        <div class="w3-modal-content"
+             style="max-width:700px;">
+
+            <div class="w3-container w3-padding">
+
+                <span class="w3-button w3-display-topright"
+                      onclick="document.getElementById('add-paragraph-modal').style.display='none'">
+                    &times;
+                </span>
+
+                <h3>Add Paragraph</h3> 
+
+                <form asp-action="AddParagraph"
+                      method="post">
+
+                    <input type="hidden"
+                           name="BlogPostId"
+                           value="@Model.Id" />
+
+                    <div class="w3-margin-bottom">
+                        <label>Text</label>
+
+                        <textarea name="Text"
+                                  rows="8"
+                                  class="w3-input w3-border"></textarea>
+                    </div>
+
+                    <button type="submit"
+                            class="w3-button w3-green">
+                        Add
+                    </button>
+
+                    <button type="button"
+                            class="w3-button w3-light-grey"
+                            onclick="document.getElementById('add-paragraph-modal').style.display='none'">
+                        Cancel
+                    </button>
+
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for photo add -->
+    <div id="add-photo-modal"
+         class="w3-modal">
+
+        <div class="w3-modal-content"
+             style="max-width:700px;">
+
+            <div class="w3-container w3-padding">
+
+                <span class="w3-button w3-display-topright"
+                      onclick="document.getElementById('add-photo-modal').style.display='none'">
+                    &times;
+                </span>
+
+                <h3>Add Photo</h3>
+
+                <form asp-action="AddPhoto"
+                      method="post"
+                      enctype="multipart/form-data">
+
+                    <input type="hidden"
+                           name="BlogPostId"
+                           value="@Model.Id" />
+
+                    <div class="w3-margin-bottom">
+                        <label>Photo</label>
+
+                        <input type="file"
+                               name="File"
+                               accept=".jpg,.jpeg,.png,.webp"
+                               class="w3-input w3-border" />
+                    </div>
+
+                    <button type="submit"
+                            class="w3-button w3-green">
+                        Add
+                    </button>
+
+                    <button type="button"
+                            class="w3-button w3-light-grey"
+                            onclick="document.getElementById('add-photo-modal').style.display='none'">
+                        Cancel
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

@@ -1,0 +1,42 @@
+﻿@model CatShelter.ViewModels.Blog.CreateBlogPostViewModel
+
+@{
+    ViewData["Title"] = "Create Blog Post";
+}
+
+<div class="w3-container page-content"
+     style="max-width:700px; margin:auto; padding:64px 16px;" ">
+
+    <h2>Create Blog Post</h2>
+
+    <form asp-action="Create" method="post">
+
+        <div asp-validation-summary="ModelOnly"
+             class="w3-text-red"></div>
+
+        <div class="w3-margin-bottom">
+            <label asp-for="Title"></label>
+
+            <input asp-for="Title"
+                   class="w3-input w3-border" />
+
+            <span asp-validation-for="Title"
+                  class="w3-text-red"></span>
+        </div>
+
+        <button type="submit"
+                class="w3-button w3-green">
+            Create
+        </button>
+
+        <a asp-action="Index"
+           class="w3-button w3-light-grey">
+            Back
+        </a>
+
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

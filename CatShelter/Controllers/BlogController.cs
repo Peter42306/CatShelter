@@ -372,5 +372,71 @@ namespace CatShelter.Controllers
 
             return RedirectToAction(nameof(Edit), new { id = model.BlogPostId });
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MoveBlockUp(
+            int id,
+            CancellationToken ct)
+        {
+            var block = await _context.BlogBlocks.FirstOrDefaultAsync(x => x.Id == id, ct);
+
+            if (block is null)
+            {
+                return NotFound();
+            }
+
+            var previousBlock = await _context.BlogBlocks
+                .Where(x => 
+                    x.BlogPostId == block.BlogPostId &&
+                    x.SortOrder < block.SortOrder)
+                .OrderByDescending(x => x.SortOrder)
+                .FirstOrDefaultAsync(ct);
+
+            if (previousBlock is not null)
+            {
+                var currentSortOrder = block.SortOrder;
+
+                block.SortOrder = previousBlock.SortOrder;
+                previousBlock.SortOrder = currentSortOrder;
+
+                await _context.SaveChangesAsync(ct);
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = block.BlogPostId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> MoveBlockDown(
+            int id,
+            CancellationToken ct)
+        {
+            var block = await _context.BlogBlocks.FirstOrDefaultAsync(x => x.Id == id, ct);
+
+            if (block is null)
+            {
+                return NotFound();
+            }
+
+            var nextBlock = await _context.BlogBlocks
+                .Where(x =>
+                    x.BlogPostId == block.BlogPostId &&
+                    x.SortOrder > block.SortOrder)
+                .OrderBy(x => x.SortOrder)
+                .FirstOrDefaultAsync(ct);
+
+            if (nextBlock is not null)
+            {
+                var currentSortOrder = block.SortOrder;
+
+                block.SortOrder = nextBlock.SortOrder;
+                nextBlock.SortOrder = currentSortOrder;
+
+                await _context.SaveChangesAsync(ct);
+            }
+
+            return RedirectToAction(nameof(Edit), new { id = block.BlogPostId });
+        }
     }
 }

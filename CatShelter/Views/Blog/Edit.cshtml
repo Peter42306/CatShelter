@@ -95,6 +95,28 @@
                         </div>
                         <div class="w3-right">
 
+                            <form asp-action="MoveBlockUp"
+                                  asp-route-id="@block.Id"
+                                  method="post"
+                                  style="display:inline;">
+
+                                <button type="submit"
+                                        class="w3-button w3-light-grey">
+                                    ↑
+                                </button>
+                            </form>
+
+                            <form asp-action="MoveBlockDown"
+                                  asp-route-id="@block.Id"
+                                  method="post"
+                                  style="display:inline;">
+
+                                <button type="submit"
+                                        class="w3-button w3-light-grey">
+                                    ↓
+                                </button>
+                            </form>
+
                             @if (block.Type == CatShelter.Models.Blog.BlogBlockType.Paragraph)
                             {
                                 <a asp-action="EditParagraph"

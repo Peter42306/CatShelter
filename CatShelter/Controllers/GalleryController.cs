@@ -49,11 +49,10 @@ namespace CatShelter.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPhotos(
-            AddGalleryPhotosViewModel model,
+        public async Task<IActionResult> AddPhoto(
+            AddGalleryPhotoViewModel model,
             CancellationToken ct)
         {
-            const int maxFiles = 10;
             const long maxFileSize = 10 * 1024 * 1024;
 
             var allowedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -64,73 +63,41 @@ namespace CatShelter.Controllers
                 ".webp"
             };
 
-            if (model.Files.Count == 0)
+            if (model.File is null || model.File.Length == 0)
             {
-                ModelState.AddModelError(
-                    nameof(model.Files),
-                    "Select at least one photo.");
-            }
-
-            if (model.Files.Count > maxFiles)
-            {
-                ModelState.AddModelError(
-                    nameof(model.Files),
-                    $"You can upload up to {maxFiles} photos per upload.");
-            }
-
-            foreach (var file in model.Files)
-            {
-                if (file.Length == 0)
-                {
-                    ModelState.AddModelError(
-                        nameof(model.Files),
-                        $"File {file.FileName} is empty.");
-
-                    continue;
-                }
-
-                if (file.Length > maxFileSize)
-                {
-                    ModelState.AddModelError(
-                        nameof(model.Files),
-                        $"File {file.FileName} exceeds 10 MB.");
-                }
-
-                var extension = Path.GetExtension(file.FileName);
-
-                if (!allowedExtensions.Contains(extension))
-                {
-                    ModelState.AddModelError(
-                        nameof(model.Files),
-                        $"File {file.FileName} has an unsupported format.");
-                }
-            }
-
-            if (!ModelState.IsValid)
-            {
+                TempData["UploadError"] = "Select a photo.";
                 return RedirectToAction(nameof(Index));
             }
 
-            var uploadedKeys = new List<string>();
+            if (model.File.Length > maxFileSize)
+            {
+                TempData["UploadError"] = $"File {model.File.FileName} exceeds 10 MB.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            var extension = Path.GetExtension(model.File.FileName);
+
+            if (!allowedExtensions.Contains(extension))
+            {
+                TempData["UploadError"] = "Only JPG, PNG, and WebP photos are allowed.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            string? storageKey = null;
 
             try
             {
-                foreach (var file in model.Files)
+                storageKey = await _photoStorage.UploadAsync(
+                    model.File,
+                    "gallery",
+                    ct);
+
+                var galleryPhoto = new GalleryPhoto
                 {
-                    var storageKey = await _photoStorage.UploadAsync(
-                        file,
-                        "gallery",
-                        ct);
+                    StorageKey = storageKey
+                };
 
-                    uploadedKeys.Add(storageKey);
-
-                    var galleryPhoto = new GalleryPhoto
-                    {
-                        StorageKey = storageKey
-                    };
-
-                    _context.GalleryPhotos.Add(galleryPhoto);
-                }
+                _context.GalleryPhotos.Add(galleryPhoto);
 
                 await _context.SaveChangesAsync(ct);
             }
@@ -138,9 +105,9 @@ namespace CatShelter.Controllers
             {
                 _logger.LogError(
                     ex,
-                    "Failed to upload gallery photos. Starting S3 cleanup.");
+                    "Failed to upload gallery photo. Starting storage cleanup.");
 
-                foreach (var storageKey in uploadedKeys)
+                if (storageKey is not null)
                 {
                     try
                     {

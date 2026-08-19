@@ -4,6 +4,7 @@ using CatShelter.Options;
 using CatShelter.Services.PhotoStorage;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace CatShelter
 {
@@ -26,6 +27,7 @@ namespace CatShelter
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+            
 
             var app = builder.Build();
 

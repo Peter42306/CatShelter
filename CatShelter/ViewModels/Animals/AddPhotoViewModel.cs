@@ -1,9 +1,9 @@
 ﻿namespace CatShelter.ViewModels.Animals
 {
-    public class AddPhotosViewModel
+    public class AddPhotoViewModel
     {
         public int AnimalId { get; set; }
 
-        public List<IFormFile> Files { get; set; } = [];
+        public IFormFile? File { get; set; }
     }
 }

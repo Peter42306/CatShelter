@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using CatShelter.ViewModels.Statistics;
 using CatShelter.ViewModels.Gallery;
 using CatShelter.Services.PhotoStorage;
+using CatShelter.Models.Animal;
+using CatShelter.ViewModels.Animals;
 
 namespace CatShelter.Controllers
 {
@@ -37,8 +39,43 @@ namespace CatShelter.Controllers
                 .OrderBy(x => x.SortOrder == null)
                 .ThenBy(x => x.SortOrder)
                 .ThenByDescending(x => x.CreatedAtUtc)
+                .Take(8)
+                .ToListAsync();
+
+            var animals = await _context.Animals
+                .Include(x => x.Photos)
+                .Where(x => x.Status == Status.Available)
+                .OrderBy(x => x.SortOrder == null)
+                .ThenBy(x => x.SortOrder)
+                .ThenByDescending(x => x.CreatedAtUtc)
                 .Take(4)
                 .ToListAsync();
+
+            var animalCards = animals
+                .Select(x =>
+                {
+                    var mainPhoto = x.Photos
+                        .OrderByDescending(p => p.IsMain)
+                        .ThenBy(p => p.SortOrder == null)
+                        .ThenBy(p => p.SortOrder)
+                        .FirstOrDefault();
+
+                    return new AnimalCardViewModel
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        Sex = x.Sex == Sex.Male
+                            ? "male"
+                            : "femail",
+                        Age = GetAgeText(x.Age),
+                        IsSterilized = x.IsSterilized,
+                        IsVaccinated = x.IsVaccinated,
+                        MainPhotoUrl = mainPhoto is not null
+                            ? _photoStorage.GetPublicUrl(mainPhoto.StorageKey)
+                            : null
+                    };
+                    
+                }).ToList();                       
 
             var model = new HomeViewModel
             {
@@ -55,8 +92,9 @@ namespace CatShelter.Controllers
                         Url = _photoStorage.GetPublicUrl(x.StorageKey),
                         Comment = x.Comment
                     })
-                    .ToList()
-                
+                    .ToList(),
+
+                Animals = animalCards                
             };
 
             return View(model);
@@ -71,6 +109,26 @@ namespace CatShelter.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private static string GetAgeText(Age? age)
+        {
+            if (age is null)
+            {
+                return "Unknown";
+            }
+
+            if (age.Years == 0)
+            {
+                return $"{age.Months} month";
+            }
+
+            if (age.Months == 0)
+            {
+                return $"{age.Years} years";
+            }
+
+            return $"{age.Years} years {age.Months} months";
         }
     }
 }

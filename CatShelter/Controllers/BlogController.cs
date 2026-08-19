@@ -154,6 +154,65 @@ namespace CatShelter.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        [HttpGet]
+        public async Task<IActionResult> Delete(
+            int id, 
+            CancellationToken ct)
+        {
+            var blogPost = await _context.BlogPosts.FindAsync(id, ct);
+
+            if (blogPost is null)
+            {
+                return NotFound();
+            }
+
+            return View(blogPost);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(
+            int id,
+            CancellationToken ct)
+        {
+            var blogPost = await _context.BlogPosts
+                .Include(x => x.Blocks)
+                .FirstOrDefaultAsync(x => x.Id == id, ct);
+
+            if (blogPost is null)
+            {
+                return NotFound();
+            }
+
+            try
+            {
+                foreach (var block in blogPost.Blocks)
+                {
+                    if (block.Type == BlogBlockType.Photo && !string.IsNullOrWhiteSpace(block.StorageKey))
+                    {
+                        await _photoStorage.DeleteAsync(block.StorageKey, ct);
+                    }
+                }
+
+                _context.BlogPosts.Remove(blogPost);
+                
+                await _context.SaveChangesAsync(ct);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to delete blog photos for blog post {BlogPostId}.",
+                    blogPost.Id);
+
+                throw;
+            }            
+
+            return RedirectToAction(nameof(Index));
+        }
+
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddParagraph(

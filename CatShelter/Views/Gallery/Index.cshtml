@@ -9,31 +9,34 @@
 
     <h2>Gallery</h2>
 
-    <form asp-action="AddPhotos"
+    <form asp-action="AddPhoto"
           method="post"
-          enctype="multipart/form-data">
+          enctype="multipart/form-data"
+          onsubmit="this.querySelector('button[type=submit]').disabled = true;">
 
         <div class="w3-margin-bottom">
-            <label>Select photos</label>
+            <label>Select photo</label>
 
             <input type="file"
-                   name="Files"
-                   multiple
+                   name="File"
                    accept=".jpg,.jpeg,.png,.webp"
                    class="w3-input w3-border" />
 
-            <span class="w3-text-red">
-                @Html.ValidationMessage("Files")
-            </span>
-
             <small>
-                Up to 10 photos. Maximum 10 MB per photo.
+                Maximum 10 MB.
             </small>
+
+            @if (TempData["UploadError"] is string uploadError)
+            {
+                <div class="w3-text-red">
+                    <p>@uploadError</p>
+                </div>
+            }
         </div>
 
         <button type="submit"
                 class="w3-button w3-green">
-            Upload Photos
+            Upload Photo
         </button>
     </form>
 

@@ -1,4 +1,5 @@
-﻿using CatShelter.ViewModels.Gallery;
+﻿using CatShelter.ViewModels.Animals;
+using CatShelter.ViewModels.Gallery;
 using CatShelter.ViewModels.Statistics;
 
 namespace CatShelter.ViewModels.Home
@@ -8,5 +9,7 @@ namespace CatShelter.ViewModels.Home
         public EditStatisticsViewModel Statistics { get; set; } = new();
 
         public List<GalleryPhotoViewModel> GalleryPhotos { get; set; } = [];
+
+        public List<AnimalCardViewModel> Animals { get; set; } = [];
     }
 }

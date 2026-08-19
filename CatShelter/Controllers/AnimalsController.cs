@@ -160,7 +160,9 @@ namespace CatShelter.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(EditAnimalViewModel model)
+        public async Task<IActionResult> Edit(
+            EditAnimalViewModel model,
+            CancellationToken ct)
         {
             ValidateBirthdate(model.BirthDate);
 
@@ -169,7 +171,7 @@ namespace CatShelter.Controllers
                 return View(model);
             }
 
-            var animal = await _context.Animals.FindAsync(model.Id);
+            var animal = await _context.Animals.FindAsync(model.Id, ct);
 
             if (animal is null)
             {
@@ -198,15 +200,15 @@ namespace CatShelter.Controllers
             animal.SortOrder = model.SortOrder;
             animal.Status = model.Status;            
 
-            await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync(ct);
 
             return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> Delete(int id, CancellationToken ct)
         {
-            var animal = await _context.Animals.FindAsync(id);
+            var animal = await _context.Animals.FindAsync(id, ct);
 
             if (animal is null)
             {
@@ -217,30 +219,65 @@ namespace CatShelter.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(
+            int id,
+            CancellationToken ct)
         {
-            var animal = await _context.Animals.FindAsync(id);
+            var animal = await _context.Animals
+                .Include(x => x.Photos)
+                .FirstOrDefaultAsync(x => x.Id == id, ct);
 
             if (animal is null)
             {
                 return NotFound();
             }
 
-            _context.Animals.Remove(animal);
+            try
+            {
+                foreach (var photo in animal.Photos)
+                {
+                    await _photoStorage.DeleteAsync(photo.StorageKey, ct);
+                }
 
-            await _context.SaveChangesAsync();
+                _context.Animals.Remove(animal);
+
+                await _context.SaveChangesAsync(ct);
+
+
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(
+                    ex,
+                    "Failed to delete photos for animal {AnimalId}.",
+                    animal.Id);
+
+                throw;
+            }            
 
             return RedirectToAction(nameof(Index));
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPhotos(
-            AddPhotosViewModel model,
+        [HttpPost]      
+        [ValidateAntiForgeryToken]        
+        public async Task<IActionResult> AddPhoto(
+            AddPhotoViewModel model,
             CancellationToken ct)
         {
-            const int maxFiles = 10;
             const long maxFileSize = 10 * 1024 * 1024;
+
+            if(model.File is null || model.File.Length == 0)
+            {
+                TempData["UploadError"] = "Select a photo.";
+                return RedirectToAction(nameof(Edit), new { id = model.AnimalId });
+            }
+
+            if (model.File.Length > maxFileSize)
+            {
+                TempData["UploadError"] = $"File {model.File.FileName} exceeds {maxFileSize / (1024 * 1024)} MB.";
+                return RedirectToAction(nameof(Edit), new { id = model.AnimalId });
+            }
 
             var allowedExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
@@ -250,6 +287,14 @@ namespace CatShelter.Controllers
                 ".webp"
             };
 
+            var extension = Path.GetExtension(model.File.FileName);
+
+            if (!allowedExtensions.Contains(extension))
+            {
+                TempData["UploadError"] = "Only JPG, PNG, and WebP photos are allowed.";
+                return RedirectToAction(nameof(Edit), new { id = model.AnimalId });
+            }
+
             var animalExists = await _context.Animals
                 .AnyAsync(x => x.Id == model.AnimalId, ct);
 
@@ -258,74 +303,22 @@ namespace CatShelter.Controllers
                 return NotFound();
             }
 
-            if (model.Files.Count == 0)
-            {
-                ModelState.AddModelError(
-                    nameof(model.Files),
-                    "Select at least one photo.");
-            }
-
-            if (model.Files.Count > maxFiles)
-            {
-                ModelState.AddModelError(
-                    nameof(model.Files),
-                    $"You can upload up to {maxFiles} photos per upload.");
-            }
-
-            foreach (var file in model.Files)
-            {
-                if (file.Length == 0)
-                {
-                    ModelState.AddModelError(
-                        nameof(model.Files),
-                        $"File {file.FileName} is empty.");
-
-                    continue;
-                }
-
-                if (file.Length > maxFileSize)
-                {
-                    ModelState.AddModelError(
-                        nameof(model.Files),
-                        $"File {file.FileName} exceeds 10 MB.");
-                }
-
-                var extension = Path.GetExtension(file.FileName);
-
-                if (!allowedExtensions.Contains(extension))
-                {
-                    ModelState.AddModelError(
-                        nameof(model.Files),
-                        $"File {file.FileName} has an unsupported format.");
-                }
-            }
-
-            if (!ModelState.IsValid)
-            {
-                return RedirectToAction(nameof(Edit), new { id = model.AnimalId });
-            }
-
-            var uploadedKeys = new List<string>();
+            string? storageKey = null;
 
             try
             {
-                foreach (var file in model.Files)
-                {
-                    var storageKey = await _photoStorage.UploadAsync(
-                        file,
-                        $"animals/{model.AnimalId}",
-                        ct);
+                storageKey = await _photoStorage.UploadAsync(
+                    model.File,
+                    $"animals/{model.AnimalId}",
+                    ct);
 
-                    uploadedKeys.Add(storageKey);                    
-
-                    var photo = new Photo
+                var photo = new Photo
                     {
                         AnimalId = model.AnimalId,
                         StorageKey = storageKey
                     };
 
-                    _context.Photos.Add(photo);
-                }
+                _context.Photos.Add(photo);                
 
                 await _context.SaveChangesAsync(ct);
             }
@@ -333,10 +326,10 @@ namespace CatShelter.Controllers
             {
                 _logger.LogError(
                     ex,
-                    "Failed to upload photos for animal {AnimalId}. Starting S3 cleanup.",
+                    "Failed to upload photo for animal {AnimalId}. Starting storage cleanup.",
                     model.AnimalId);
 
-                foreach (var storageKey in uploadedKeys)
+                if (storageKey is not null)
                 {
                     try
                     {
@@ -352,15 +345,12 @@ namespace CatShelter.Controllers
                             storageKey,
                             model.AnimalId);
                     }
-                    
                 }
 
                 throw;
             }
 
-            
-
-            return RedirectToAction(nameof(Edit), new { id = model.AnimalId });
+            return RedirectToAction(nameof(Edit), new { id = model.AnimalId });            
         }
 
         [HttpPost]
@@ -376,14 +366,14 @@ namespace CatShelter.Controllers
                 return NotFound();
             }
 
-            var currentMainPhotos = await _context.Photos
+            var currentMainPhoto = await _context.Photos
                 .FirstOrDefaultAsync(
                     x => x.AnimalId == photo.AnimalId && x.IsMain,
                     ct);
 
-            if (currentMainPhotos is not null)
+            if (currentMainPhoto is not null)
             {
-                currentMainPhotos.IsMain = false;
+                currentMainPhoto.IsMain = false;
             }
 
             photo.IsMain = true;
@@ -557,7 +547,7 @@ namespace CatShelter.Controllers
             int videoId,
             CancellationToken ct)
         {
-            var video = _context.Videos.FirstOrDefault(x => x.Id == videoId);
+            var video = await _context.Videos.FirstOrDefaultAsync(x => x.Id == videoId, ct);
 
             if (video is null)
             {

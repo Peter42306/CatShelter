@@ -1,11 +1,73 @@
-﻿<section class="w3-container w3-light-grey" id="pets">
+﻿@model List<CatShelter.ViewModels.Animals.AnimalCardViewModel>
+
+<section class="w3-light-grey" style="padding:64px 16px" id="pets">
     <div class="content-section-narrow">
         <h3 class="w3-center">НАШИ ПИТОМЦЫ</h3>
-        <p class="w3-large">Здесь вы можете познакомиться с нашими питомцами, которые ищут любящий дом и заботливую семью. Каждый из них имеет свою историю и очень ждёт человека, который подарит ему тепло, безопасность и любовь.</p>
-        <div class="w3-col">
-            <a href="all-cats-page.html" class="w3-button w3-white">
-                Смотреть всех питомцев
-            </a>
+        <div style="max-width:1300px; margin:0 auto;">
+            <p class="w3-large">Здесь вы можете познакомиться с нашими питомцами, которые ищут любящий дом и заботливую семью. Каждый из них имеет свою историю и очень ждёт человека, который подарит ему тепло, безопасность и любовь.</p>                        
         </div>
+    </div>
+
+    
+    <div class="w3-row-padding">
+        @foreach (var animal in Model)
+        {
+            <div class="w3-col l3 m6 s12 w3-container w3-margin-bottom">
+
+                <a asp-controller="Animals"
+                   asp-action="Details"
+                   asp-route-id="@animal.Id">
+
+                    @if (!string.IsNullOrWhiteSpace(animal.MainPhotoUrl))
+                    {
+                        <div>
+                            <img src="@animal.MainPhotoUrl"
+                                 alt="@animal.Name"
+                                 style="width:100%"
+                                 class="w3-hover-opacity" />
+                        </div>
+                    }
+
+                </a>
+
+                <div class="w3-container w3-white">
+
+                    <h3>@animal.Name</h3>
+
+                    <p>
+                        Пол: @animal.Sex<br />
+                        Возраст: @animal.Age<br />
+                        Стерилизация: @(animal.IsSterilized ? "да" : "нет")<br />
+                        Вакцинация: @(animal.IsVaccinated ? "да" : "нет")
+                    </p>
+
+                    <div style="display:flex; gap:12px; margin-bottom:15px;">
+
+                        <a asp-controller="Animals"
+                           asp-action="Details"
+                           asp-route-id="@animal.Id"
+                           class="w3-button w3-light-grey"
+                           style="flex:1;">
+                            Детали
+                        </a>
+
+                        <button type="button"
+                                onclick="copyAnimalLink('@Url.Action("Details", "Animals", new { id = animal.Id }, Context.Request.Scheme)')"
+                                class="w3-button w3-light-grey"
+                                style="flex:1;">
+                            Поделиться
+                        </button>
+
+                    </div>
+                </div>
+
+            </div>
+        }
+    </div>                
+
+    <div class="content-section-narrow">        
+        <a href="all-cats-page.html" class="w3-button w3-white">
+            Смотреть всех питомцев
+        </a>        
     </div>
 </section>
